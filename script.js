@@ -1,8 +1,11 @@
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const apiKey = '8ec7bf65de60c24cd8cc5785a686cad5';
+
 const defaultLat = 59.926547;
 const defaultLon = 30.342669;
 const defaultCity = 'Saint Petersburg';
+
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 const temperature = document.getElementById('temperature');
 const city = document.getElementById('city');
 const cityName = city.textContent.split(',')[0].trim(); 
@@ -11,9 +14,12 @@ const description = document.getElementById('description');
 const humidity = document.getElementById('humidity');
 const precipitation = document.getElementById('precipitation');
 const windSpeed = document.getElementById('wind');
+
 const appWeatherIcon = document.querySelector('.app__weather__icon');
+
 const searchForm = document.getElementById('search-form');
 const openMapButton = document.querySelector('.app__openmap__button');
+
 const appWeather = document.getElementById('app-weather'); 
 
 const cityBackgrounds = {
@@ -23,22 +29,15 @@ const cityBackgrounds = {
     'Paris': 'images/paris.jpg',
     'New York': 'images/new_york.jpg',
     'Tokyo': 'images/tokyo.jpg',
-    'Moscow': 'images/moscow.jpg'
+    'Moscow': 'images/moscow.jpg',
+    'Saint Petersburg': 'images/saint_petersburg.jpg'
 }
 
-/* Set city photo */
-function setCityBackground(cityName) {
-    const backgroundImage = cityBackgrounds[cityName];
-    if (backgroundImage) {
-        appWeather.style.backgroundImage = `url(${backgroundImage})`;
-    } else {
-        appWeather.style.backgroundImage = `url('images/saint_petersburg.jpg')`;
-    }
+function makeFirstLetterUpper(phrase) {
+    return phrase[0].toUpperCase() + phrase.slice(1);
 }
 
-// Получаем название города
-
-/* Deafault front after loading 
+/* Default front after loading 
 ================================ */
 document.addEventListener('DOMContentLoaded', () => {
     setCurrentDate();
@@ -49,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     getNextDaysWeather(defaultLat, defaultLon);
     /*getWeatherByMap(defaultLat, defaultLon);*/
 });
-
 
 
 /* Day and Date
@@ -82,10 +80,15 @@ function setNextDays(currentDay) {
 }
 
 
-function makeFirstLetterUpper(phrase) {
-    return phrase[0].toUpperCase() + phrase.slice(1);
+/* Set city photo */
+function setCityBackground(cityName) {
+    const backgroundImage = cityBackgrounds[cityName];
+    if (backgroundImage) {
+        appWeather.style.backgroundImage = `url(${backgroundImage})`;
+    } else {
+        appWeather.style.backgroundImage = `url('images/weather_background.jpeg')`;
+    }
 }
-
 
 /* Prepare tempreture to show
 ============================== */
@@ -114,34 +117,10 @@ function setTempColor(temp) {
     };
 };
 
-/* Search weather by city name 
-============================== */
 
-searchForm.addEventListener('submit', async(event) => {
-    event.preventDefault();
-
-    /*const enteredCity = cityInput.value.trim();
-
-    enteredCity?getWeatherByCity(enteredCity):alert('Please enter a city name');
-
-    cityInput.value = '';*/
-    const inputElement = document.getElementById('city-input');
-    const cityName = inputElement.value.trim();
-
-    if (!cityName) {
-        alert('Please select or enter a city.');
-        return;
-    }
-
-    await getWeatherByCity(cityName);
-    inputElement.value = '';
-});
-
-
-/* Change weather icons */
-
+/* Change weather icons
+======================== */
 function updateWeatherIcon(mainweather) {
-    // Маппинг описания на имена иконок
     const iconMapping = {
         Clear: 'sun', // Ясная погода
         Clouds: 'cloud', // Облачно
@@ -167,6 +146,8 @@ function updateWeatherIcon(mainweather) {
     appWeatherIcon.alt = mainweather;
 }
 
+/*Search weather by city name
+============================== */
 async function getWeatherByCity(cityName) {
     try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${apiKey}`);
@@ -175,7 +156,6 @@ async function getWeatherByCity(cityName) {
         }
 
         const data = await response.json();
-        console.log(data);
         console.log('Successfullly got weather data by city name');
         city.textContent = `${data.name}, ${data.sys.country}`;
         description.textContent = makeFirstLetterUpper(data.weather[0].description);
@@ -194,6 +174,21 @@ async function getWeatherByCity(cityName) {
         console.error(error);
     }
 };
+
+searchForm.addEventListener('submit', async(event) => {
+    event.preventDefault();
+
+    const inputElement = document.getElementById('city-input');
+    const cityName = inputElement.value.trim();
+
+    if (!cityName) {
+        alert( 'Please select or enter a city' );
+        return;
+    }
+
+    await getWeatherByCity(cityName);
+    inputElement.value = '';
+});
 
 /* Search weather with map 
 ========================== */
@@ -238,12 +233,12 @@ async function getWeatherByMap(lat, lon) {
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
+        console.log('Successfully got weather by MAP');
 
     } catch (error) {
         alert('Unable to fetch weather data. Please check your VPN or Internet connection and try again.');
     }
 };
-
 
 /* Show weather for next 4 days
 ================================= */
@@ -254,7 +249,6 @@ async function getNextDaysWeather(lat, lon) {
             throw new Error('Failed to fetch weather data');
         }
         const data = await response.json();
-        console.log(data)
         const nextDaysTemp = data.daily.temperature_2m_max;
 
         for (let i = 1; i < 5; i++) {
@@ -268,6 +262,8 @@ async function getNextDaysWeather(lat, lon) {
 
             let nextDayImg = document.getElementById(`next-day-img${i}`);
         };
+
+        console.log('Successfully got weather for NEXT days');
 
     } catch (error) {
         alert('Unable to fetch weather data for next days. Please check your Internet connection or VPN and try again.');

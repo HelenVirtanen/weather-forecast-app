@@ -8,7 +8,8 @@ body {
     min-height: 100vh;
     background-color: #343D4B;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     font-family: 'Montserrat', sans-serif;
 }
@@ -19,11 +20,12 @@ body {
     display: flex;
     align-items: center;
     color: #fff;
+    margin: 30px 0 10px;
 }
 
 
 .app__weather {
-    width: 493px;
+    width: 500px;
     height: 100%;
     background: url('https://www.atorus.ru/sites/default/files/styles/head_carousel/public/2023-07/A062_C012_20170626_R.jpg.webp?itok=JzCbL3s_') no-repeat center;
     background-size: cover;
@@ -32,8 +34,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
     transition: transform .2s ease;
+    z-index: 2;
 }
 
 .app__top {
@@ -74,7 +76,8 @@ body {
 
 .app__bottom {
     position: relative;
-    padding-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
     padding-left: 1.5rem;
     margin-bottom: 0rem;
     width: 80%;
@@ -92,6 +95,7 @@ body {
     height: 625px;
     background-color: #222831;
     padding: 55px;
+    margin-left: -5px;
 }
 
 .app__temperature {
@@ -213,6 +217,12 @@ body {
     background-color: #099be9;
 }
 
+.app__search__button:active {
+    background-color: #077bb7; 
+    transform: scale(0.99);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
 .app__openmap__button {
     width: 100%;
     margin-top: 30px;
@@ -236,6 +246,22 @@ body {
     transform: scale(1.05);
 }
 
+.footer {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    text-align: center;
+    color: #FFF;
+    padding: 10px 0; 
+}
+
+.footer__subtitle {
+    font-weight: 100;
+    font-style: italic;
+    color: #ffa6ff;
+    font-size: 16px;
+}
+
 @media screen and (max-width: 1000px) {
     body {
         align-items: flex-start;
@@ -245,7 +271,7 @@ body {
         flex-direction: column;
         width: 100%;
     }
-  
+
 
     .app__weather, .app__info {
         width: 100%;
@@ -272,6 +298,21 @@ body {
     }
 }
 
+@media (max-width: 480px) {
+    .app {
+    margin: 0;
+    height: auto;
+    }
+
+    .app__info {
+        margin-left: 0;
+    }
+    
+    .app__top {
+        max-width: 100%;
+    }
+}
+
  .app__openmap__button-icon {
     width: 18px;
     height: 22px;
@@ -286,11 +327,4 @@ body {
     z-index: 1000;
     background-color: white;
     border: 2px solid #ccc;
-}
-
-
-@media (max-width: 480px) {
-    .app__top {
-        max-width: 100%;
-    }
 }
