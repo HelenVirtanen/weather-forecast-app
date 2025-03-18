@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast App</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <div class="app__weather" id="app-weather">
+            <div class="app__top">
+                <div class="app__day" id="currentDay">Friday</div>
+                <div class="app__date" id="currentDate">17 March 2025</div>
+                <div class="app__location">
+                    <div class="app__location-icon">
+                        <img class="app__location-icon-element" src="https://cdn-icons-png.freepik.com/512/9800/9800512.png" alt="Saint Petersburg, RU">
+                    </div>
+                    <div class="app__location-value" id="city">Five Corners, RU</div>
+                </div>
+            </div>
+            <div class="wrapper">
+            </div>
+            <div class="app__bottom">
+                <img class="app__weather__icon" src="images/cloud.svg" alt="Clouds">
+                <img class="app__weather__advice" src="https://cdn1.iconfinder.com/data/icons/winter-holidays-3/512/41_Coffee_Hot_Drink_Winter_Coffee_Cup_Mug_Food_And_Restaurant-512.png" width="55" alt="Coffee">
+                <div class="app__temperature" id="temperature">20 °C</div>
+                <div class="app__status" id="description">Sunny</div>
+            
+        </div>
+        </div>
+
+        <div class="app__info">
+            <div class="app__list">
+                <div class="app__list-item">
+                    <div class="app__list-item-title">PRECIPITATION</div>
+                    <div class="app__list-item-value" id="precipitation">0%</div>
+                </div>
+                <div class="app__list-item">
+                    <div class="app__list-item-title">HUMIDITY</div>
+                    <div class="app__list-item-value" id="humidity">42%</div>
+                </div>
+                <div class="app__list-item">
+                    <div class="app__list-item-title" >WIND</div>
+                    <div class="app__list-item-value" id="wind">10 km/h</div>
+                </div>
+            </div>
+            <div class="app__days">
+                <div class="app__days-item app__days-item--current">
+                    <img class="app__days-image" id="next-day-img1" src="https://cdn2.iconfinder.com/data/icons/weather-682/1024/sun_sunny-512.png" alt="Fri">
+                    <h3 class="app__days-title" id="next-day1">Fri</h3>
+                    <p class="app__days-temperature" id="next-temp1"></p>
+                </div>
+                <div class="app__days-item">
+                    <img class="app__days-image" id="next-day-img2" src="https://cdn2.iconfinder.com/data/icons/weather-682/1153/cloud_4-512.png" alt="Sat">
+                    <h3 class="app__days-title" id="next-day2">Sat</h3>
+                    <p class="app__days-temperature" id="next-temp2"></p>
+                </div>
+                <div class="app__days-item">
+                    <img class="app__days-image" id="next-day-img3" src="https://cdn2.iconfinder.com/data/icons/weather-682/1024/rain_sun-512.png" alt="Sun">
+                    <h3 class="app__days-title" id="next-day3">Sun</h3>
+                    <p class="app__days-temperature" id="next-temp3"></p>
+                </div>
+                <div class="app__days-item">
+                    <img class="app__days-image" id="next-day-img4" src="https://cdn2.iconfinder.com/data/icons/weather-682/1024/sun_sunny-512.png" alt="Mon">
+                    <h3 class="app__days-title" id="next-day4">Mon</h3>
+                    <p class="app__days-temperature" id="next-temp4"></p>
+                </div>
+            </div>
+            <form action="/"class="app__search" id="search-form">
+            <input class="app__search__input" type="text" id="city-input" list="city-list" placeholder="Select or enter a city...">
+            <datalist id="city-list">
+                <option value="Moscow"></option>
+                <option value="Saint Petersurg"></option>
+                <option value="Melbourne"></option>
+                <option value="Sydney"></option>
+                <option value="London"></option>
+                <option value="New York"></option>
+                <option value="Paris"></option>
+                <option value="Tokyo"></option>
+                
+            </datalist>
+            <button class="app__search__button" type="submit">Show</button>
+            </form>
+            <button class="app__openmap__button">
+                <img class="app__openmap__button-icon" src="https://static-00.iconduck.com/assets.00/location-position-icon-1640x2048-6jqx3f7e.png" alt="Change Location">
+                Open map
+            </button>
+        </div>
+    </div>
+    <div id="map"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
