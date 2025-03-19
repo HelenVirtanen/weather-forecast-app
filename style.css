@@ -90,6 +90,13 @@ body {
     height: auto;
 }
 
+.app__weather__advice {
+    position: absolute;
+    width: 65px;
+    top: 10%;
+    right: 5%;
+}
+
 .app__info {
     width: 520px;
     height: 625px;

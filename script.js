@@ -20,18 +20,36 @@ const appWeatherIcon = document.querySelector('.app__weather__icon');
 const searchForm = document.getElementById('search-form');
 const openMapButton = document.querySelector('.app__openmap__button');
 
-const appWeather = document.getElementById('app-weather'); 
+const appWeather = document.getElementById('app-weather');
+const weatherAdvice = document.querySelector('.app__weather__advice');
 
 const cityBackgrounds = {
-    'London': 'images/london.jpg',
-    'Sydney': 'images/sydney.jpg',
-    'Melbourne': 'images/melbourne.jpg',
-    'Paris': 'images/paris.jpg',
-    'New York': 'images/new_york.jpg',
-    'Tokyo': 'images/tokyo.jpg',
-    'Moscow': 'images/moscow.jpg',
-    'Saint Petersburg': 'images/saint_petersburg.jpg'
+    'London': 'images/cities/london.jpg',
+    'Sydney': 'images/cities/sydney.jpg',
+    'Melbourne': 'images/cities/melbourne.jpg',
+    'Paris': 'images/cities/paris.jpg',
+    'New York': 'images/cities/new_york.jpg',
+    'Tokyo': 'images/cities/tokyo.jpg',
+    'Moscow': 'images/cities/moscow.jpg',
+    'Saint Petersburg': 'images/cities/saint_petersburg.jpg'
 }
+
+const weatherAdvices = {
+    cloud_hot: 'images/advices/cloud_hot_advice.png',
+    cloud_chilly: 'images/advices/cloud_chilly_advice.png',
+    cloud_warm: 'images/advices/cloud_warm_advice.png',
+    cloud_cold: 'images/advices/cloud_cold_advice.png',
+    rain_cold: 'images/advices/rain_cold_advice.png',
+    rain_chilly: 'images/advices/rain_chilly_advice.png',
+    rain_warm: 'images/advices/rain_warm_advice.png',
+    rain_hot: 'images/advices/rain_hot_advice.png',
+    sun_cold: 'images/advices/sun_cold_advice.png',
+    sun_chilly: 'images/advices/sun_chilly_advice.png',
+    sun_warm: 'images/advices/sun_warm_advice.png',
+    sun_hot: 'images/advices/sun_hot_advice.png',
+    default: 'images/advices/default_advice.png',
+};
+
 
 function makeFirstLetterUpper(phrase) {
     return phrase[0].toUpperCase() + phrase.slice(1);
@@ -86,7 +104,7 @@ function setCityBackground(cityName) {
     if (backgroundImage) {
         appWeather.style.backgroundImage = `url(${backgroundImage})`;
     } else {
-        appWeather.style.backgroundImage = `url('images/weather_background.jpeg')`;
+        appWeather.style.backgroundImage = `url('images/cities/weather_background.jpeg')`;
     }
 }
 
@@ -142,8 +160,67 @@ function updateWeatherIcon(mainweather) {
     };
 
     const iconName = iconMapping[mainweather] || 'cloud';
-    appWeatherIcon.src = `images/${iconName}.svg`;
+    appWeatherIcon.src = `images/weather_icons/${iconName}.svg`;
     appWeatherIcon.alt = mainweather;
+}
+
+/* Change advice pictures
+======================== 
+*/
+
+function updateWeatherAdvice(mainweather, temp) {
+    const adviceMapping = {
+        Clear: 'sun',
+        Clouds: 'cloud',
+        FewClouds: 'sun',
+        ScatteredClouds: 'cloud',
+        Drizzle: 'rain',
+        Rain: 'rain',
+        Thunderstorm: 'rain',
+        Snow: 'snow',
+        Mist: 'cloud',
+        Fog: 'cloud',
+        Haze: 'sun',
+        Smoke: 'cloud',
+        Dust: 'sun',
+        Sand: 'sun',
+        Ash: 'cloud',
+        Squall: 'cloud',
+        Tornado: 'rain',
+    };
+
+    const temperatureRanges = {
+        cold: temp < 0,
+        chilly: temp >= 0 && temp < 10,
+        warm: temp >= 10 && temp < 20,
+        hot: temp >= 20,
+    };
+
+    const adviceKeyBase = adviceMapping[mainweather] || 'default';
+    let adviceKey = adviceKeyBase;
+
+    if (temperatureRanges.cold) adviceKey += '_cold';
+    else if (temperatureRanges.chilly) adviceKey += '_chilly';
+    else if (temperatureRanges.warm) adviceKey += '_warm';
+    else if (temperatureRanges.hot) adviceKey += '_hot';
+
+    if (weatherAdvice) {
+        weatherAdvice.src = weatherAdvices[adviceKey] || weatherAdvices['default'];
+        weatherAdvice.alt = `${mainweather} advice`;
+
+        const styleMapping = {
+            sun: { width: '105px', top: '10%' },
+            cloud_chilly: { width: '65px', top: '8%' },
+            cloud_hot: { width: '75px', top: '8%' },
+            cloud_warm: { width: '75px', top: '8%' },
+            cloud_cold: { width: '75px', top: '8%' },
+            rain: { width: '95px', top: '5%' },
+        };
+
+        const style = Object.entries(styleMapping).find(([key]) => adviceKey.includes(key))?.[1] || {};
+        weatherAdvice.style.width = style.width || '';
+        weatherAdvice.style.top = style.top || '';
+    }
 }
 
 /*Search weather by city name
@@ -164,6 +241,7 @@ async function getWeatherByCity(cityName) {
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
         updateWeatherIcon(data.weather[0].main);
+        updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
         setCityBackground(cityName);
 
         const { lat, lon } = data.coord;
@@ -233,7 +311,8 @@ async function getWeatherByMap(lat, lon) {
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
-        console.log('Successfully got weather by MAP');
+        updateWeatherIcon(data.weather[0].main);
+        updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
 
     } catch (error) {
         alert('Unable to fetch weather data. Please check your VPN or Internet connection and try again.');
@@ -262,8 +341,6 @@ async function getNextDaysWeather(lat, lon) {
 
             let nextDayImg = document.getElementById(`next-day-img${i}`);
         };
-
-        console.log('Successfully got weather for NEXT days');
 
     } catch (error) {
         alert('Unable to fetch weather data for next days. Please check your Internet connection or VPN and try again.');
