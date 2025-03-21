@@ -8,27 +8,15 @@ const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 
 const currentDay = new Date().getDay();
 const currentDayElement = document.getElementById('currentDay');
-const currentDayInfo = document.getElementById('next-day0');
-const nextDays = document.getElementById('next-days');
 
 
-const temperature = document.getElementById('temperature');
-const currentDayTempInfo = document.getElementById('next-temp0');
 const city = document.getElementById('city');
 const cityName = city.textContent.split(',')[0].trim(); 
 const cityInput = document.getElementById('city-input');
-const description = document.getElementById('description');
-const humidity = document.getElementById('humidity');
-const precipitation = document.getElementById('precipitation');
-const windSpeed = document.getElementById('wind');
+
+const temperature = document.getElementById('temperature');
 
 const appWeatherIcon = document.querySelector('.app__weather__icon');
-
-const searchForm = document.getElementById('search-form');
-const openMapButton = document.querySelector('.app__openmap__button');
-
-const appWeather = document.getElementById('app-weather');
-const weatherAdvice = document.querySelector('.app__weather__advice');
 
 const cityBackgrounds = {
     'London': 'images/cities/london.jpg',
@@ -56,6 +44,25 @@ const weatherAdvices = {
     sun_hot: 'images/advices/sun_hot_advice.png',
     default: 'images/advices/default_advice.png',
 };
+
+const weatherFeatures = document.getElementById('weather-features-list');
+const tempFeelsLike = document.getElementById('feels-like');
+const tempFeelsLikeValue = document.querySelector('#feels-like > span');
+const description = document.getElementById('description');
+const humidity = document.getElementById('humidity');
+const precipitation = document.getElementById('precipitation');
+const windSpeed = document.getElementById('wind');
+
+
+const nextDays = document.getElementById('next-days');
+const currentDayInfo = document.getElementById('next-day0');
+const currentDayTempInfo = document.getElementById('next-temp0');
+
+const searchForm = document.getElementById('search-form');
+const openMapButton = document.querySelector('.app__openmap__button');
+
+const appWeather = document.getElementById('app-weather');
+const weatherAdvice = document.querySelector('.app__weather__advice');
 
 
 function makeFirstLetterUpper(phrase) {
@@ -101,6 +108,7 @@ function setNextDays(currentDay) {
     }
 }
 
+/* Change day in next days info */
 nextDays.addEventListener('click', (event) => {
     const clickedNextDay = event.target.closest(".app__days-item");
     if (clickedNextDay) {
@@ -111,7 +119,6 @@ nextDays.addEventListener('click', (event) => {
         clickedNextDay.classList.add('app__days-item--current');
     }
 });
-
 
 /* Set city background */
 function setCityBackground(cityName) {
@@ -139,13 +146,39 @@ function setTempColor(temp) {
         return "blue";
     } else if ( temp < 0 ) {
         return "lightskyblue";
-    } else if ( temp > 10 && temp < 25) {
+    } else if ( temp > 10 && temp < 21) {
         return "moccasin";
-    } else if ( temp > 24) {
+    } else if ( temp > 20 && temp < 30) {
+        return "darkorange";   
+    } else if ( temp > 29) {
         return "orangered";
     } else {
         return "white";
     };
+};
+
+function setTempFeelsLikeColor(temp) {
+    let color; 
+
+    if (temp < -20) {
+        color = "blue";
+    } else if ( temp < 0 ) {
+        color ="lightskyblue";
+    } else if ( temp > 10 && temp < 21) {
+        color = "moccasin";
+    } else if (temp > 20 && temp < 30) {
+        color = "darkorange";
+    } else if ( temp > 29) {
+        color = "orangered";
+    } else {
+        color = "white";
+    };
+
+    if (temp > 0) {
+        return `<span style="color: ${color};">+${temp}</span> °C`;
+    } else {
+        return `<span style="color: ${color};">${temp}</span> °C`
+    }
 };
 
 function formatTemp(temp) {
@@ -239,6 +272,18 @@ function updateWeatherAdvice(mainweather, temp) {
     }
 }
 
+/* Style choosed weather feature */
+weatherFeatures.addEventListener('click', (event) => {
+    const clickedWeatherFeature = event.target.closest(".app__list-item");
+    if (clickedWeatherFeature) {
+        const choosedFeature = weatherFeatures.querySelector('.app__list-item--active');
+        if (choosedFeature) {
+            choosedFeature.classList.remove('app__list-item--active');
+        }
+        clickedWeatherFeature.classList.add('app__list-item--active');
+    }
+})
+
 /*Search weather by city name */
 async function getWeatherByCity(cityName) {
     try {
@@ -255,6 +300,7 @@ async function getWeatherByCity(cityName) {
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
+        tempFeelsLike.innerHTML = setTempFeelsLikeColor(convertTemp(data.main.feels_like));
         currentDayTempInfo.textContent = temperature.textContent;
         updateWeatherIcon(data.weather[0].main);
         updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
@@ -326,6 +372,8 @@ async function getWeatherByMap(lat, lon) {
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
+        tempFeelsLike.innerHTML = setTempFeelsLikeColor(convertTemp(data.main.feels_like));
+        currentDayTempInfo.textContent = temperature.textContent;
         updateWeatherIcon(data.weather[0].main);
         updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
 

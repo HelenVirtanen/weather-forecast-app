@@ -41,7 +41,11 @@
         </div>
 
         <div class="app__info">
-            <div class="app__list">
+            <div class="app__list" id="weather-features-list">
+                <div class="app__list-item app__list-item--active">
+                    <div class="app__list-item-title">FEELS LIKE</div>
+                    <div class="app__list-item-value" id="feels-like"><span>+15</span></div>
+                </div>
                 <div class="app__list-item">
                     <div class="app__list-item-title">PRECIPITATION</div>
                     <div class="app__list-item-value" id="precipitation">0%</div>
@@ -54,6 +58,7 @@
                     <div class="app__list-item-title" >WIND</div>
                     <div class="app__list-item-value" id="wind">10 km/h</div>
                 </div>
+                
             </div>
             <div class="app__days" id="next-days">
                 <div class="app__days-item app__days-item--current">
