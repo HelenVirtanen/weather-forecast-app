@@ -41,7 +41,7 @@ body {
 .app__top {
     display: flex;
     flex-direction: column;
-    background-color: rgb(20 19 18 / 60%);
+    background-color: rgb(9 32 57 / 60%);
     max-width: 70%;
     border-radius: 1rem;
     padding: 1.5rem;
@@ -64,6 +64,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0 8px;
+    color: cyan;
 }
 
 .app__location-icon-element
@@ -265,7 +266,7 @@ body {
 .footer__subtitle {
     font-weight: 100;
     font-style: italic;
-    color: #ffa6ff;
+    color: #75d1ff;
     font-size: 16px;
 }
 

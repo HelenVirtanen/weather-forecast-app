@@ -6,7 +6,14 @@ const defaultCity = 'Saint Petersburg';
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+const currentDay = new Date().getDay();
+const currentDayElement = document.getElementById('currentDay');
+const currentDayInfo = document.getElementById('next-day0');
+const nextDays = document.getElementById('next-days');
+
+
 const temperature = document.getElementById('temperature');
+const currentDayTempInfo = document.getElementById('next-temp0');
 const city = document.getElementById('city');
 const cityName = city.textContent.split(',')[0].trim(); 
 const cityInput = document.getElementById('city-input');
@@ -55,8 +62,7 @@ function makeFirstLetterUpper(phrase) {
     return phrase[0].toUpperCase() + phrase.slice(1);
 }
 
-/* Default front after loading 
-================================ */
+/* Default front after loading */
 document.addEventListener('DOMContentLoaded', () => {
     setCurrentDate();
     const currentDay = setCurrentDay();
@@ -68,8 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* Day and Date
-===================== */
+/* Set current day, next days and date */
 function formatDate(date) {
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'long' });
@@ -84,21 +89,31 @@ function setCurrentDate() {
 }
 
 function setCurrentDay() {
-    const currentDayElement = document.getElementById('currentDay');
-    const currentDay = new Date().getDay();
     currentDayElement.textContent = days[currentDay];
+    currentDayInfo.textContent = days[(currentDay) % 7].slice(0, 3);
     return currentDay;
 }
 
 function setNextDays(currentDay) {
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < 4; i++) {
         const nextDay = document.getElementById(`next-day${i}`);
         nextDay.textContent = days[(currentDay + i) % 7].slice(0, 3);
     }
 }
 
+nextDays.addEventListener('click', (event) => {
+    const clickedNextDay = event.target.closest(".app__days-item");
+    if (clickedNextDay) {
+        const choosedDayInfo = nextDays.querySelector('.app__days-item--current');
+        if (choosedDayInfo) {
+            choosedDayInfo.classList.remove('app__days-item--current');
+        }
+        clickedNextDay.classList.add('app__days-item--current');
+    }
+});
 
-/* Set city photo */
+
+/* Set city background */
 function setCityBackground(cityName) {
     const backgroundImage = cityBackgrounds[cityName];
     if (backgroundImage) {
@@ -108,13 +123,11 @@ function setCityBackground(cityName) {
     }
 }
 
-/* Prepare tempreture to show
-============================== */
+/* Convert and style tempreture */
 function updateTemp(temp, element) {
     const temperatureValue = convertTemp(temp);
     element.style.color = setTempColor(temperatureValue);
-    return `${temperatureValue} °C`;
-
+    return formatTemp(temperatureValue);
 }
 
 function convertTemp(temp) {
@@ -135,9 +148,15 @@ function setTempColor(temp) {
     };
 };
 
+function formatTemp(temp) {
+    if (temp > 0) {
+        return `+${temp} °C`;
+    } else {
+        return `${temp} °C`;
+    };
+}
 
-/* Change weather icons
-======================== */
+/* Change weather icons */
 function updateWeatherIcon(mainweather) {
     const iconMapping = {
         Clear: 'sun', // Ясная погода
@@ -164,10 +183,7 @@ function updateWeatherIcon(mainweather) {
     appWeatherIcon.alt = mainweather;
 }
 
-/* Change advice pictures
-======================== 
-*/
-
+/* Change advice pictures */
 function updateWeatherAdvice(mainweather, temp) {
     const adviceMapping = {
         Clear: 'sun',
@@ -214,7 +230,7 @@ function updateWeatherAdvice(mainweather, temp) {
             cloud_hot: { width: '75px', top: '8%' },
             cloud_warm: { width: '75px', top: '8%' },
             cloud_cold: { width: '75px', top: '8%' },
-            rain: { width: '95px', top: '5%' },
+            rain: { width: '105px', top: '8%' },
         };
 
         const style = Object.entries(styleMapping).find(([key]) => adviceKey.includes(key))?.[1] || {};
@@ -223,8 +239,7 @@ function updateWeatherAdvice(mainweather, temp) {
     }
 }
 
-/*Search weather by city name
-============================== */
+/*Search weather by city name */
 async function getWeatherByCity(cityName) {
     try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${apiKey}`);
@@ -240,6 +255,7 @@ async function getWeatherByCity(cityName) {
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
+        currentDayTempInfo.textContent = temperature.textContent;
         updateWeatherIcon(data.weather[0].main);
         updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
         setCityBackground(cityName);
@@ -268,8 +284,7 @@ searchForm.addEventListener('submit', async(event) => {
     inputElement.value = '';
 });
 
-/* Search weather with map 
-========================== */
+/* Search weather with map */
 let map, marker;
 
 openMapButton.addEventListener('click', () => {
@@ -319,8 +334,7 @@ async function getWeatherByMap(lat, lon) {
     }
 };
 
-/* Show weather for next 4 days
-================================= */
+/* Show weather for next 3 days */
 async function getNextDaysWeather(lat, lon) {
     try {
         const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,weathercode&timezone=auto`);
@@ -328,16 +342,13 @@ async function getNextDaysWeather(lat, lon) {
             throw new Error('Failed to fetch weather data');
         }
         const data = await response.json();
+        console.log(data);
         const nextDaysTemp = data.daily.temperature_2m_max;
 
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 4; i++) {
             let nextDay = document.getElementById(`next-temp${i}`);
             let nextDayTemp = convertTemp(nextDaysTemp[i]);
-            if (nextDayTemp > 0) {
-                nextDay.textContent = `+${nextDayTemp} °C`;
-            } else {
-                nextDay.textContent = `${nextDayTemp} °C`;
-            }
+            nextDay.textContent = formatTemp(nextDayTemp);
 
             let nextDayImg = document.getElementById(`next-day-img${i}`);
         };
