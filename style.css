@@ -64,7 +64,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0 8px;
-    color: cyan;
+    color: #00ddff;
 }
 
 .app__location-icon-element
@@ -99,11 +99,12 @@ body {
 }
 
 .app__info {
-    width: 520px;
-    height: 625px;
+    width: 530px; /*520px*/
+    height: 625px; /*625px;*/
     background-color: #222831;
     padding: 55px;
-    margin-left: -5px;
+    padding-left: 80px;
+    margin-left: -25px;
 }
 
 .app__temperature {
@@ -120,7 +121,7 @@ body {
 .app__list {
     display: flex;
     flex-direction: column;
-    gap: 12px 0;
+    gap: 14px 0;
     margin-bottom: 30px;
 }
 
@@ -130,14 +131,11 @@ body {
     align-items: center;
     position: relative;
     transition: color .2s linear;
+    font-size: 22px;
 }
 
 .app__list-item:hover {
     color: moccasin;
-}
-
-.app__list-item:hover::after {
-    width: 100%;
 }
 
 .app__list-item::after {
@@ -165,12 +163,10 @@ body {
 }
 
 .app__list-item-title {
-    font-size: 26px;
     font-weight: 700;
 }
 
 .app__list-item-value {
-    font-size: 28px;
     font-weight: 500;
 }
 
@@ -182,7 +178,7 @@ body {
 }
 
 .app__days-item {
-    height: 168px;
+    height: 150px /*168px*/;
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -228,11 +224,11 @@ body {
     height: 45px;
     background: #fff;
     border: 1px solid #e7e7e7;
-    font-size: 16px;
+    font-size: 17px;
     font-style: italic;
     font-weight: 300;
     color: #333;
-    padding: 12px 14px;
+    padding: 12px 12px 12px 14px;
     font-family: "Montserrat", sans-serif;
     line-height: 1.1;
     border-right: none;
@@ -268,7 +264,7 @@ body {
 
 .app__openmap__button {
     width: 100%;
-    margin-top: 30px;
+    margin-top: 20px;
     padding: 10px 30px;
     display: flex;
     justify-content: center;

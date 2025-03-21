@@ -45,18 +45,39 @@ const weatherAdvices = {
     default: 'images/advices/default_advice.png',
 };
 
+const iconMapping = {
+    Clear: 'sun', // Ясная погода
+    Clouds: 'cloud', // Облачно
+    FewClouds: 'cloud_sun', // Небольшая облачность
+    ScatteredClouds: 'cloud_cloudy_sun', // Рассеянная облачность
+    Drizzle: 'cloud_drizzle', // Мелкий дождь
+    Rain: 'cloud_rain', // Дождь
+    Thunderstorm: 'cloud_heavy_rain', // Гроза
+    Snow: 'cloud_cold_snow', // Снег
+    Mist: 'cloud', // Туман
+    Fog: 'cloud', // Мгла
+    Haze: 'sun_umbrella', // Лёгкая дымка
+    Smoke: 'cloud', // Дым
+    Dust: 'cloud', // Пыль
+    Sand: 'cloud', // Песчаная буря
+    Ash: 'cloud', // Вулканический пепел
+    Squall: 'cloud_cloudy_sun', // Шквалы
+    Tornado: 'cloud_heavy_rain' // Торнадо
+};
+
 const weatherFeatures = document.getElementById('weather-features-list');
 const tempFeelsLike = document.getElementById('feels-like');
-const tempFeelsLikeValue = document.querySelector('#feels-like > span');
 const description = document.getElementById('description');
 const humidity = document.getElementById('humidity');
 const precipitation = document.getElementById('precipitation');
 const windSpeed = document.getElementById('wind');
+const pressure = document.getElementById('pressure');
 
 
 const nextDays = document.getElementById('next-days');
 const currentDayInfo = document.getElementById('next-day0');
 const currentDayTempInfo = document.getElementById('next-temp0');
+const currentDayIcon = document.getElementById('next-day-img0'); 
 
 const searchForm = document.getElementById('search-form');
 const openMapButton = document.querySelector('.app__openmap__button');
@@ -76,8 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setNextDays(currentDay);
     getWeatherByCity(defaultCity);
     setCityBackground(cityName);
-    getNextDaysWeather(defaultLat, defaultLon);
-    /*getWeatherByMap(defaultLat, defaultLon);*/
+    getWeatherNextDaysNoon(defaultLat, defaultLon);
 });
 
 
@@ -157,30 +177,6 @@ function setTempColor(temp) {
     };
 };
 
-function setTempFeelsLikeColor(temp) {
-    let color; 
-
-    if (temp < -20) {
-        color = "blue";
-    } else if ( temp < 0 ) {
-        color ="lightskyblue";
-    } else if ( temp > 10 && temp < 21) {
-        color = "moccasin";
-    } else if (temp > 20 && temp < 30) {
-        color = "darkorange";
-    } else if ( temp > 29) {
-        color = "orangered";
-    } else {
-        color = "white";
-    };
-
-    if (temp > 0) {
-        return `<span style="color: ${color};">+${temp}</span> °C`;
-    } else {
-        return `<span style="color: ${color};">${temp}</span> °C`
-    }
-};
-
 function formatTemp(temp) {
     if (temp > 0) {
         return `+${temp} °C`;
@@ -189,31 +185,32 @@ function formatTemp(temp) {
     };
 }
 
-/* Change weather icons */
-function updateWeatherIcon(mainweather) {
-    const iconMapping = {
-        Clear: 'sun', // Ясная погода
-        Clouds: 'cloud', // Облачно
-        FewClouds: 'cloud_sun', // Небольшая облачность
-        ScatteredClouds: 'cloud_cloudy_sun', // Рассеянная облачность
-        Drizzle: 'cloud_drizzle', // Мелкий дождь
-        Rain: 'cloud_rain', // Дождь
-        Thunderstorm: 'cloud_heavy_rain', // Гроза
-        Snow: 'cloud_cold_snow', // Снег
-        Mist: 'cloud', // Туман
-        Fog: 'cloud', // Мгла
-        Haze: 'sun_umbrella', // Лёгкая дымка
-        Smoke: 'cloud', // Дым
-        Dust: 'cloud', // Пыль
-        Sand: 'cloud', // Песчаная буря
-        Ash: 'cloud', // Вулканический пепел
-        Squall: 'cloud_cloudy_sun', // Шквалы
-        Tornado: 'cloud_heavy_rain' // Торнадо
-    };
+/* Convert and style pressure */
+function updatePressure(pressure, element) {
+    const pressureValue = calculatePressure(pressure);
+    element.style.color = setPressureColor(pressureValue);
+    return pressureValue;
+}
 
+function calculatePressure(pressure) {
+    return Math.round(pressure * 0.750063);
+}
+
+function setPressureColor(pressure) {
+    if (pressure < 750) {
+        return "lightseagreen";
+    } else if (pressure >= 750 && pressure < 765) {
+        return "cornflowerblue"; 
+    } else if (pressure >= 765) {
+        return "deeppink"; 
+    };
+}
+
+/* Change weather icons */
+function updateWeatherIcon(mainweather, element) {
     const iconName = iconMapping[mainweather] || 'cloud';
-    appWeatherIcon.src = `images/weather_icons/${iconName}.svg`;
-    appWeatherIcon.alt = mainweather;
+    element.src = `images/weather_icons/${iconName}.svg`;
+    element.alt = mainweather;
 }
 
 /* Change advice pictures */
@@ -293,21 +290,24 @@ async function getWeatherByCity(cityName) {
         }
 
         const data = await response.json();
-        console.log('Successfullly got weather data by city name');
+
         city.textContent = `${data.name}, ${data.sys.country}`;
         description.textContent = makeFirstLetterUpper(data.weather[0].description);
         humidity.textContent = `${data.main.humidity}%`;
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
+        pressure.textContent = `${updatePressure(data.main.pressure, pressure)} mmHg`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
-        tempFeelsLike.innerHTML = setTempFeelsLikeColor(convertTemp(data.main.feels_like));
+        tempFeelsLike.textContent = updateTemp(data.main.temp, tempFeelsLike);
         currentDayTempInfo.textContent = temperature.textContent;
-        updateWeatherIcon(data.weather[0].main);
+        updateWeatherIcon(data.weather[0].main, appWeatherIcon);
+        updateWeatherIcon(data.weather[0].main, currentDayIcon);
+
         updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
         setCityBackground(cityName);
 
         const { lat, lon } = data.coord;
-        await getNextDaysWeather(lat, lon);
+        await getWeatherNextDaysNoon(lat, lon);
 
     } catch (error) {
         alert('Unable to fetch weather data for next days. Please check your Internet connection or VPN and try again.');
@@ -372,17 +372,52 @@ async function getWeatherByMap(lat, lon) {
         precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
-        tempFeelsLike.innerHTML = setTempFeelsLikeColor(convertTemp(data.main.feels_like));
+        tempFeelsLike.textContent = updateTemp(data.main.temp, tempFeelsLike);
+        pressure.textContent = `${updatePressure(data.main.pressure)} mmHg`;
         currentDayTempInfo.textContent = temperature.textContent;
-        updateWeatherIcon(data.weather[0].main);
+        updateWeatherIcon(data.weather[0].main, appWeatherIcon);
+        updateWeatherIcon(data.weather[0].main, currentDayIcon);
         updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
+
+        const { lat, lon } = data.coord;
+        await getWeatherNextDaysNoon(lat, lon);
 
     } catch (error) {
         alert('Unable to fetch weather data. Please check your VPN or Internet connection and try again.');
     }
 };
 
+
 /* Show weather for next 3 days */
+async function getWeatherNextDaysNoon(lat, lon) {
+    try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        
+
+        const forecastNoon = data.list
+            .filter(entry => {
+                const forecastTime = new Date(entry.dt * 1000);
+                return forecastTime.getUTCHours() === 12; // Noon
+            })
+            .slice(0, 3) // Take 3 days
+
+        for (let i = 0; i < 3; i++) {
+            let nextDayTemp = document.getElementById(`next-temp${i+1}`);
+            nextDayTemp.textContent = formatTemp(convertTemp(forecastNoon[i].main.temp));
+
+            let nextDayImg = document.getElementById(`next-day-img${i+1}`);
+            updateWeatherIcon(forecastNoon[i].weather[0].main, nextDayImg);
+            console.log(forecastNoon[i].dt_txt, forecastNoon[i].weather[0].main);
+        }
+
+    } catch (error) {
+        console.error("Ошибка получения данных:", error);
+    }
+}
+
+
+/* Show weather for next 3 days with Open Meteo
 async function getNextDaysWeather(lat, lon) {
     try {
         const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,weathercode&timezone=auto`);
@@ -390,7 +425,6 @@ async function getNextDaysWeather(lat, lon) {
             throw new Error('Failed to fetch weather data');
         }
         const data = await response.json();
-        console.log(data);
         const nextDaysTemp = data.daily.temperature_2m_max;
 
         for (let i = 1; i < 4; i++) {
@@ -405,5 +439,4 @@ async function getNextDaysWeather(lat, lon) {
         alert('Unable to fetch weather data for next days. Please check your Internet connection or VPN and try again.');
         console.error(error);
     }
-};
-
+};*/
