@@ -127,14 +127,6 @@ function setCurrentDay() {
     return currentDay;
 }
 
-/*
-function setNextDays(currentDay) {
-    for (let i = 1; i < 4; i++) {
-        const nextDay = document.getElementById(`next-day${i}`);
-        nextDay.textContent = days[(currentDay + i) % 7].slice(0, 3);
-    }
-}*/
-
 /* Set city background */
 function setCityBackground(cityName) {
     const backgroundImage = cityBackgrounds[cityName];
@@ -524,27 +516,3 @@ function updateDateAndDay(dateText) {
     currentDateElement.textContent = formatDate(date);
     currentDayElement.textContent = days[date.getDay() % 7];
 }
-
-/* Show weather for next 3 days with Open Meteo
-async function getNextDaysWeather(lat, lon) {
-    try {
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,weathercode&timezone=auto`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch weather data');
-        }
-        const data = await response.json();
-        const nextDaysTemp = data.daily.temperature_2m_max;
-
-        for (let i = 1; i < 4; i++) {
-            let nextDay = document.getElementById(`next-temp${i}`);
-            let nextDayTemp = roundValue(nextDaysTemp[i]);
-            nextDay.textContent = formatTemp(nextDayTemp);
-
-            let nextDayImg = document.getElementById(`next-day-img${i}`);
-        };
-
-    } catch (error) {
-        alert('Unable to fetch weather data for next days. Please check your Internet connection or VPN and try again.');
-        console.error(error);
-    }
-};*/
