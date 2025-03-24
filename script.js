@@ -7,8 +7,9 @@ const defaultCity = 'Saint Petersburg';
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const currentDay = new Date().getDay();
+const currentDate = new Date();
 const currentDayElement = document.getElementById('currentDay');
-
+const currentDateElement = document.getElementById('currentDate');
 
 const city = document.getElementById('city');
 const cityName = city.textContent.split(',')[0].trim(); 
@@ -66,6 +67,7 @@ const iconMapping = {
 };
 
 const weatherFeatures = document.getElementById('weather-features-list');
+const weatherFeatureValue = document.querySelector('.app__list-item-value');
 const tempFeelsLike = document.getElementById('feels-like');
 const description = document.getElementById('description');
 const humidity = document.getElementById('humidity');
@@ -78,6 +80,8 @@ const nextDays = document.getElementById('next-days');
 const currentDayInfo = document.getElementById('next-day0');
 const currentDayTempInfo = document.getElementById('next-temp0');
 const currentDayIcon = document.getElementById('next-day-img0'); 
+let forecastNextDaysNoon = [];
+let currentWeatherToday = []
 
 const searchForm = document.getElementById('search-form');
 const openMapButton = document.querySelector('.app__openmap__button');
@@ -90,11 +94,15 @@ function makeFirstLetterUpper(phrase) {
     return phrase[0].toUpperCase() + phrase.slice(1);
 }
 
+function roundValue(value) {
+    return Math.round(value);
+}
+
 /* Default front after loading */
 document.addEventListener('DOMContentLoaded', () => {
     setCurrentDate();
-    const currentDay = setCurrentDay();
-    setNextDays(currentDay);
+    setCurrentDay();
+    /*setNextDays(currentDay);*/
     getWeatherByCity(defaultCity);
     setCityBackground(cityName);
     getWeatherNextDaysNoon(defaultLat, defaultLon);
@@ -110,8 +118,6 @@ function formatDate(date) {
 }
 
 function setCurrentDate() {
-    const currentDateElement = document.getElementById('currentDate');
-    const currentDate = new Date();
     currentDateElement.textContent = formatDate(currentDate);
 }
 
@@ -121,24 +127,13 @@ function setCurrentDay() {
     return currentDay;
 }
 
+/*
 function setNextDays(currentDay) {
     for (let i = 1; i < 4; i++) {
         const nextDay = document.getElementById(`next-day${i}`);
         nextDay.textContent = days[(currentDay + i) % 7].slice(0, 3);
     }
-}
-
-/* Change day in next days info */
-nextDays.addEventListener('click', (event) => {
-    const clickedNextDay = event.target.closest(".app__days-item");
-    if (clickedNextDay) {
-        const choosedDayInfo = nextDays.querySelector('.app__days-item--current');
-        if (choosedDayInfo) {
-            choosedDayInfo.classList.remove('app__days-item--current');
-        }
-        clickedNextDay.classList.add('app__days-item--current');
-    }
-});
+}*/
 
 /* Set city background */
 function setCityBackground(cityName) {
@@ -152,28 +147,26 @@ function setCityBackground(cityName) {
 
 /* Convert and style tempreture */
 function updateTemp(temp, element) {
-    const temperatureValue = convertTemp(temp);
+    const temperatureValue = roundValue(temp);
     element.style.color = setTempColor(temperatureValue);
     return formatTemp(temperatureValue);
 }
 
-function convertTemp(temp) {
-    return Math.round(temp);
-} 
-
 function setTempColor(temp) {
     if (temp < -20) {
-        return "blue";
-    } else if ( temp < 0 ) {
+        return "deepskyblue";
+    } else if (temp < 0) {
         return "lightskyblue";
-    } else if ( temp > 10 && temp < 21) {
-        return "moccasin";
-    } else if ( temp > 20 && temp < 30) {
-        return "darkorange";   
-    } else if ( temp > 29) {
-        return "orangered";
-    } else {
+    } else if (temp >= 0 && temp < 5) {
         return "white";
+    } else if (temp >= 5 && temp < 16) {
+        return "moccasin";
+    } else if (temp >= 15 && temp < 25) {
+        return "gold";
+    } else if ( temp >= 25 && temp < 35) {
+        return "darkorange";   
+    } else if ( temp >= 35) {
+        return "orangered";
     };
 };
 
@@ -185,24 +178,84 @@ function formatTemp(temp) {
     };
 }
 
+/* Convert and style wind speed */
+function updateWind(wind, element) {
+    const windValue = roundValue(wind);
+    element.style.color = setWindColor(windValue);
+    return `${windValue} m/s`;
+}
+
+function setWindColor(wind) {
+    if (wind < 4) {
+        return "cornflowerblue";
+    } else if ( wind >= 4 && wind < 8) {
+        return "lightpink";
+    } else if ( wind >= 8 && wind < 14) {
+        return "hotpink";
+    } else if ( wind >= 14 && wind < 21) {
+        return "deeppink";   
+    } else if ( wind >= 21) {
+        return "MediumVioletRed";
+    };
+}
+
 /* Convert and style pressure */
 function updatePressure(pressure, element) {
     const pressureValue = calculatePressure(pressure);
     element.style.color = setPressureColor(pressureValue);
-    return pressureValue;
+    return `${pressureValue} mmHg`;
 }
 
 function calculatePressure(pressure) {
-    return Math.round(pressure * 0.750063);
+    return roundValue(pressure * 0.750063);
 }
 
 function setPressureColor(pressure) {
     if (pressure < 750) {
-        return "lightseagreen";
+        return "yellowgreen";
     } else if (pressure >= 750 && pressure < 765) {
         return "cornflowerblue"; 
     } else if (pressure >= 765) {
         return "deeppink"; 
+    };
+}
+
+/* Style humidity */
+function updateHumidity(humidityProc, element) {
+    element.style.color = setHumidityColor(humidityProc);
+    return `${humidityProc} %`;
+}
+
+function setHumidityColor(humidityProc) {
+    if (humidityProc < 31) {
+        return "yellowgreen";
+    } else if (humidityProc >= 31 && humidityProc < 61) {
+        return "cornflowerblue"; 
+    } else if (humidityProc >= 61 && humidityProc < 91) {
+        return "deeppink"; 
+    } else if (humidityProc >= 91) {
+        return "MediumVioletRed";
+    };
+}
+
+
+/* Style precipitation */
+function updatePrecipitation(rainValue, element) {
+    element.style.color = setPrecipitationColor(rainValue);
+    return `${rainValue} %`;
+}
+
+function setPrecipitationColor(rainValue) {
+    if (rainValue < 6) {
+        return "cornflowerblue";
+    } else if ( rainValue >= 6 && rainValue < 20) {
+        return "royalblue";
+    } else if ( rainValue >= 20 && rainValue < 50) {
+        return "BlueViolet";
+    } else if ( rainValue >= 50 && rainValue < 100) {
+        return "deeppink";   
+    } else if ( rainValue >= 100) {
+        return "MediumVioletRed";
     };
 }
 
@@ -272,6 +325,7 @@ function updateWeatherAdvice(mainweather, temp) {
 /* Style choosed weather feature */
 weatherFeatures.addEventListener('click', (event) => {
     const clickedWeatherFeature = event.target.closest(".app__list-item");
+
     if (clickedWeatherFeature) {
         const choosedFeature = weatherFeatures.querySelector('.app__list-item--active');
         if (choosedFeature) {
@@ -290,20 +344,20 @@ async function getWeatherByCity(cityName) {
         }
 
         const data = await response.json();
-
+        currentWeatherToday = data;
         city.textContent = `${data.name}, ${data.sys.country}`;
         description.textContent = makeFirstLetterUpper(data.weather[0].description);
-        humidity.textContent = `${data.main.humidity}%`;
-        precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
-        windSpeed.textContent = `${data.wind.speed} km/h`;
-        pressure.textContent = `${updatePressure(data.main.pressure, pressure)} mmHg`;
+        humidity.textContent = updateHumidity(data.main.humidity, humidity);
+        precipitation.textContent = updatePrecipitation(data.rain?.['1h'] || 0, precipitation); 
+        windSpeed.textContent = updateWind(data.wind.speed, windSpeed);
+        pressure.textContent = updatePressure(data.main.pressure, pressure);
         temperature.textContent = updateTemp(data.main.temp, temperature);
         tempFeelsLike.textContent = updateTemp(data.main.temp, tempFeelsLike);
         currentDayTempInfo.textContent = temperature.textContent;
         updateWeatherIcon(data.weather[0].main, appWeatherIcon);
         updateWeatherIcon(data.weather[0].main, currentDayIcon);
 
-        updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
+        updateWeatherAdvice(data.weather[0].main, roundValue(data.main.temp));
         setCityBackground(cityName);
 
         const { lat, lon } = data.coord;
@@ -368,16 +422,16 @@ async function getWeatherByMap(lat, lon) {
 
         city.textContent = `${data.name}, ${data.sys.country}`;
         description.textContent = makeFirstLetterUpper(data.weather[0].description);
-        humidity.textContent = `${data.main.humidity}%`;
-        precipitation.textContent = `${data.rain?.['1h'] || 0}%`; 
+        humidity.textContent = updateHumidity(data.main.humidity, humidity);
+        precipitation.textContent = updatePrecipitation(data.rain?.['1h'] || 0, precipitation); 
         windSpeed.textContent = `${data.wind.speed} km/h`;
         temperature.textContent = updateTemp(data.main.temp, temperature);
         tempFeelsLike.textContent = updateTemp(data.main.temp, tempFeelsLike);
-        pressure.textContent = `${updatePressure(data.main.pressure)} mmHg`;
+        pressure.textContent = updatePressure(data.main.pressure, pressure);
         currentDayTempInfo.textContent = temperature.textContent;
         updateWeatherIcon(data.weather[0].main, appWeatherIcon);
         updateWeatherIcon(data.weather[0].main, currentDayIcon);
-        updateWeatherAdvice(data.weather[0].main, convertTemp(data.main.temp));
+        updateWeatherAdvice(data.weather[0].main, roundValue(data.main.temp));
 
         const { lat, lon } = data.coord;
         await getWeatherNextDaysNoon(lat, lon);
@@ -393,22 +447,26 @@ async function getWeatherNextDaysNoon(lat, lon) {
     try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
         const data = await response.json();
-        
 
-        const forecastNoon = data.list
+        const today = new Date();
+        forecastNextDaysNoon = data.list
             .filter(entry => {
                 const forecastTime = new Date(entry.dt * 1000);
-                return forecastTime.getUTCHours() === 12; // Noon
+                return (forecastTime.getUTCDate() !== today.getUTCDate() && 
+                        forecastTime.getUTCHours() === 12); // Noon
             })
-            .slice(0, 3) // Take 3 days
+            .slice(0, 3); // Take 3 days
 
-        for (let i = 0; i < 3; i++) {
-            let nextDayTemp = document.getElementById(`next-temp${i+1}`);
-            nextDayTemp.textContent = formatTemp(convertTemp(forecastNoon[i].main.temp));
+        for (let i = 0; i < forecastNextDaysNoon.length; i++) {
+            let nextDayTemp = document.getElementById(`next-temp${i + 1}`);
+            nextDayTemp.textContent = formatTemp(roundValue(forecastNextDaysNoon[i].main.temp));
 
-            let nextDayImg = document.getElementById(`next-day-img${i+1}`);
-            updateWeatherIcon(forecastNoon[i].weather[0].main, nextDayImg);
-            console.log(forecastNoon[i].dt_txt, forecastNoon[i].weather[0].main);
+            let nextDayImg = document.getElementById(`next-day-img${i + 1}`);
+            updateWeatherIcon(forecastNextDaysNoon[i].weather[0].main, nextDayImg);
+
+            let nextDay = document.getElementById(`next-day${i + 1}`);
+            let nextDayDate = new Date(forecastNextDaysNoon[i].dt_txt);
+            nextDay.textContent = days[nextDayDate.getDay() % 7].slice(0, 3);
         }
 
     } catch (error) {
@@ -416,6 +474,56 @@ async function getWeatherNextDaysNoon(lat, lon) {
     }
 }
 
+/* Change day in next days info */
+nextDays.addEventListener('click', (event) => {
+    const clickedNextDay = event.target.closest(".app__days-item");
+    if (clickedNextDay) {
+        const choosedDayInfo = nextDays.querySelector('.app__days-item--current');
+        if (choosedDayInfo) {
+            choosedDayInfo.classList.remove('app__days-item--current');
+        }
+        clickedNextDay.classList.add('app__days-item--current');
+
+        // Получение индекса выбранного дня
+        const dayIndex = Array.from(nextDays.children).indexOf(clickedNextDay);
+
+        if (dayIndex === 0) {
+            const data = currentWeatherToday;
+            setCurrentDate();
+            setCurrentDay();
+            temperature.textContent = updateTemp(data.main.temp, temperature);
+            tempFeelsLike.textContent = updateTemp(data.main.temp, tempFeelsLike);
+            description.textContent = makeFirstLetterUpper(data.weather[0].description);
+            humidity.textContent = updateHumidity(data.main.humidity, humidity);
+            precipitation.textContent = updatePrecipitation(data.rain?.['1h'] || 0, precipitation); 
+            windSpeed.textContent = `${data.wind.speed} km/h`;
+            pressure.textContent = updatePressure(data.main.pressure, pressure);
+            currentDayTempInfo.textContent = temperature.textContent;
+            updateWeatherIcon(data.weather[0].main, appWeatherIcon);
+            updateWeatherAdvice(data.weather[0].main, roundValue(data.main.temp));
+        }
+
+        if (dayIndex !== 0 && forecastNextDaysNoon[dayIndex - 1]) {
+            const data = forecastNextDaysNoon[dayIndex - 1];
+            updateDateAndDay(data.dt_txt);
+            temperature.textContent = updateTemp(data.main.temp, temperature);
+            tempFeelsLike.textContent = updateTemp(data.main.feels_like, tempFeelsLike);
+            humidity.textContent = updateHumidity(data.main.humidity, humidity);
+            precipitation.textContent = updatePrecipitation(data.rain?.['3h'] || 0, precipitation);
+            windSpeed.textContent = updateWind(data.wind.speed, windSpeed);
+            pressure.textContent = updatePressure(data.main.pressure, pressure);
+            description.textContent = makeFirstLetterUpper(data.weather[0].main);
+            updateWeatherIcon(data.weather[0].main, appWeatherIcon);
+            updateWeatherAdvice(data.weather[0].main, roundValue(data.main.temp));
+        }
+    }
+});
+
+function updateDateAndDay(dateText) {
+    const date = new Date(dateText); 
+    currentDateElement.textContent = formatDate(date);
+    currentDayElement.textContent = days[date.getDay() % 7];
+}
 
 /* Show weather for next 3 days with Open Meteo
 async function getNextDaysWeather(lat, lon) {
@@ -429,7 +537,7 @@ async function getNextDaysWeather(lat, lon) {
 
         for (let i = 1; i < 4; i++) {
             let nextDay = document.getElementById(`next-temp${i}`);
-            let nextDayTemp = convertTemp(nextDaysTemp[i]);
+            let nextDayTemp = roundValue(nextDaysTemp[i]);
             nextDay.textContent = formatTemp(nextDayTemp);
 
             let nextDayImg = document.getElementById(`next-day-img${i}`);

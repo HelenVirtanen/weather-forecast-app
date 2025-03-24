@@ -16,8 +16,7 @@
 </head>
 
 <body>
-    <main>
-    <div class="app">
+    <main class="app">
         <div class="app__weather" id="app-weather">
             <div class="app__top">
                 <div class="app__day" id="currentDay">Friday</div>
@@ -36,7 +35,7 @@
                 <div class="app__temperature" id="temperature">20 °C</div>
                 <div class="app__status" id="description">Sunny</div>
                 <div class="wrapper">
-                <img class="app__weather__advice" src="https://cdn1.iconfinder.com/data/icons/winter-holidays-3/512/41_Coffee_Hot_Drink_Winter_Coffee_Cup_Mug_Food_And_Restaurant-512.png" alt="Coffee"></div>
+                <img class="app__weather__advice" src="images/advices/default_advice.png" alt="Coffee"></div>
         </div>
         </div>
 
@@ -44,7 +43,7 @@
             <div class="app__list" id="weather-features-list">
                 <div class="app__list-item app__list-item--active">
                     <div class="app__list-item-title">FEELS LIKE</div>
-                    <div class="app__list-item-value" id="feels-like">+15</div>
+                    <div class="app__list-item-value app__list-item-value--active" id="feels-like">+15 </div>
                 </div>
                 <div class="app__list-item">
                     <div class="app__list-item-title">PRECIPITATION</div>
@@ -96,6 +95,12 @@
                 <option value="New York"></option>
                 <option value="Paris"></option>
                 <option value="Tokyo"></option>
+                <option value="Dubai"></option>
+                <option value="Singapore"></option>
+                <option value="Mumbai"></option>
+                <option value="Reykjavik"></option>
+                <option value="Pekin"></option>
+                <option value="Bangkok"></option>
                 
             </datalist>
             <button class="app__search__button" type="submit">Show</button>
@@ -105,9 +110,8 @@
                 Open map
             </button>
         </div>
-    </div>
+    </main>
     <div id="map"></div>
-</main>
 <footer class="footer">
     <p>&copy; 2025 Helen Virtanen</p>
     <p class="footer__subtitle"><em>Created with care</em></p>
