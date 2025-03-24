@@ -102,12 +102,10 @@ function roundValue(value) {
 document.addEventListener('DOMContentLoaded', () => {
     setCurrentDate();
     setCurrentDay();
-    /*setNextDays(currentDay);*/
     getWeatherByCity(defaultCity);
     setCityBackground(cityName);
     getWeatherNextDaysNoon(defaultLat, defaultLon);
 });
-
 
 /* Set current day, next days and date */
 function formatDate(date) {
@@ -230,7 +228,6 @@ function setHumidityColor(humidityProc) {
     };
 }
 
-
 /* Style precipitation */
 function updatePrecipitation(rainValue, element) {
     element.style.color = setPrecipitationColor(rainValue);
@@ -301,7 +298,7 @@ function updateWeatherAdvice(mainweather, temp) {
 
         const styleMapping = {
             sun: { width: '105px', top: '10%' },
-            cloud_chilly: { width: '65px', top: '8%' },
+            cloud_chilly: { width: '70px', top: '10%' },
             cloud_hot: { width: '75px', top: '8%' },
             cloud_warm: { width: '75px', top: '8%' },
             cloud_cold: { width: '75px', top: '8%' },
