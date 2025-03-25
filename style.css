@@ -304,6 +304,10 @@ body {
 }
 
 @media screen and (max-width: 990px) {
+    body {
+        background-color: #222831;
+    }
+
     .app {
         flex-direction: column;
         width: 100%;

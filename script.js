@@ -81,7 +81,7 @@ const currentDayInfo = document.getElementById('next-day0');
 const currentDayTempInfo = document.getElementById('next-temp0');
 const currentDayIcon = document.getElementById('next-day-img0'); 
 let forecastNextDaysNoon = [];
-let currentWeatherToday = []
+let currentWeatherToday = [];
 
 const searchForm = document.getElementById('search-form');
 const openMapButton = document.querySelector('.app__openmap__button');
