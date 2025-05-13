@@ -1,4 +1,4 @@
-const apiKey = 'YOUR APIKEY';
+const apiKey = '8ec7bf65de60c24cd8cc5785a686cad5';
 
 const defaultLat = 59.926547;
 const defaultLon = 30.342669;
