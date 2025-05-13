@@ -1,0 +1,429 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background-color: #343D4B;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.app {
+    max-width: 1000px;
+    height: 670px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    margin: 30px 0 20px;
+}
+
+
+.app__weather {
+    width: 500px;
+    height: 100%;
+    background: url('https://www.atorus.ru/sites/default/files/styles/head_carousel/public/2023-07/A062_C012_20170626_R.jpg.webp?itok=JzCbL3s_') no-repeat center;
+    background-size: cover;
+    border-radius: 35px;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform .2s ease;
+    z-index: 2;
+}
+
+.app__top {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(9 32 57 / 60%);
+    max-width: 70%;
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.app__day {
+    font-size: 2.1rem /*37px*/;
+    font-weight: 700;
+}
+
+.app__date {
+    margin: 16px 0 13px;
+    font-size: 1.5rem /*24px*/;
+    font-weight: 500;
+}
+
+.app__location {
+    font-size: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0 8px;
+    color: #00ddff;
+}
+
+.app__location-icon-element
+{
+    width: 30px;
+    height: auto;
+    background: url('https://cdn-icons-png.freepik.com/512/9800/9800512.png') no-repeat left;
+    display: flex;
+}
+
+.app__bottom {
+    position: relative;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    margin-bottom: 0rem;
+    max-width: 80%;
+    border-radius: 1rem;
+    background: rgba(35, 1, 1, 0.5);
+}
+
+.app__weather__icon {
+    width: 85px;
+    height: auto;
+}
+
+.app__weather__advice {
+    position: absolute;
+    width: 65px;
+    top: 10%;
+    right: 5%;
+}
+
+.app__info {
+    width: 530px; /*520px*/
+    height: 625px; /*625px;*/
+    background-color: #222831;
+    padding: 55px;
+    padding-left: 80px;
+    margin-left: -25px;
+}
+
+.app__temperature {
+    margin: 9px 0;
+    font-size: 50px;
+    font-weight: 700;
+}
+
+.app__status {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.app__list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px 0;
+    margin-bottom: 30px;
+}
+
+.app__list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    transition: color .2s linear;
+    font-size: 22px;
+}
+
+.app__list-item:hover {
+    color: moccasin;
+}
+
+.app__list-item::after {
+    content: "";
+    width: 0;
+    height: 2px;
+    background-color: moccasin;
+    position:absolute;
+    bottom:-5px;
+    left: 0;
+    z-index: 1;
+    transition: width .3s linear;
+}
+
+.app__list-item--active {
+    color: moccasin;
+}
+
+.app__list-item--active::after {
+    width: 100%;
+}
+
+.app__list-item-title {
+    font-weight: 700;
+}
+
+.app__list-item-value {
+    font-weight: 500;
+}
+
+.app__list-item-value--active {
+    font-weight: 700;
+}
+
+.app__days {
+    margin: 0 0 40px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 1px;
+}
+
+.app__days-item {
+    height: 150px /*168px*/;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #272E37;
+    box-shadow: 1px 2px 4px 0px #222831;
+    border-radius: 10px;
+    transition: background-color .2s linear, color .2s linear, transform .2s linear;
+    cursor: pointer;
+}
+
+.app__days-item:not(.app__days-item--current):hover {
+    background-color: #819EC2;
+}
+
+.app__days-item--current {
+    background-color: #fff;
+    color: #000;
+    transform: scale(1.05);
+}
+
+.app__days-image {
+    max-width: 55px;
+}
+
+.app__days-title {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.app__days-temperature {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.app__search {
+    width: 100%;
+    display: flex;
+}
+
+.app__search__input {
+    width: 60%;
+    height: 45px;
+    background: #fff;
+    border: 1px solid #e7e7e7;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 300;
+    color: #333;
+    padding: 12px 12px 12px 14px;
+    font-family: "Montserrat", sans-serif;
+    line-height: 1.1;
+    border-right: none;
+    border-radius: 0.5rem 0 0  0.5rem;
+}
+
+.app__search__button {
+    width: 40%;
+    height: 45px;
+    font-family: "Montserrat", sans-serif;
+    text-transform: uppercase;
+    background-color: #1e50c6;
+    border: 0;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 12px;
+    line-height: 1.1;
+    border-radius: 0 0.5rem 0.5rem 0;
+    transition: background-color .2s linear;
+}
+
+.app__search__button:hover {
+    background-color: #099be9;
+}
+
+.app__search__button:active {
+    background-color: #077bb7; 
+    transform: scale(0.99);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.app__openmap__button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 8px;
+    background: linear-gradient(91deg, rgba(241, 108, 82, 0.90) 0.2%, rgba(77, 72, 120, 0.90) 100%);
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    appearance: button;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    transition: transform .2s ease;
+}
+
+.app__openmap__button:hover {
+    transform: scale(1.05);
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 0;
+    text-align: center;
+    color: #FFF;
+    padding: 10px 0; 
+}
+
+.footer__subtitle {
+    font-weight: 100;
+    font-style: italic;
+    color: #75d1ff;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 990px) {
+    body {
+        background-color: #222831;
+    }
+
+    .app {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        margin-top: 0;
+        }
+    
+    .app__weather, 
+    .app__info {
+        width: 100%;
+        height: auto;
+    }
+    .app__weather {
+        border-radius: 0;
+        height: 70dvh;
+    }
+
+    .app__info {
+        padding: 55px;
+        margin-left: 0;
+    }
+
+    .app__top {
+        max-width: 40%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .app__weather {
+        flex-direction: row;
+    }
+    
+    .app__info {
+        padding: 48px 32px;
+        margin-left: 0;
+    }
+
+    .app__top {
+        max-width: 45%;
+    }
+
+    .app__top,
+    .app__bottom {
+        height: 40%;
+    }
+
+    .app__bottom {
+        width: 60%;
+    }
+}
+
+@media (max-width: 575px) {
+    .app__weather {
+        border-radius: 0;
+        flex-direction: column;
+    }
+
+    .app__info {
+        padding: 48px 32px;
+    }
+    
+    .app__days {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1px;
+    }
+
+    .app__top {
+        max-width: 60%;
+        height: auto;
+    }
+
+    .app__bottom {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        margin-top: 50px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .app {
+    margin: 0;
+    height: auto;
+    }
+
+    .app__weather {
+        height: 100dvh;
+    }
+
+    .app__info {
+        height: auto;
+    }
+
+    .app__days-image {
+        max-width: 70px;
+    }
+    
+    .app__top, 
+    .app__bottom {
+        max-width: 100%;
+    }
+}
+
+.app__openmap__button-icon {
+    width: 18px;
+    height: 22px;
+  }
+
+#map {
+    width: 50%;
+    height: 400px; 
+    display: none;
+    position: absolute;
+    margin: 0 auto;
+    z-index: 1000;
+    background-color: white;
+    border: 2px solid #ccc;
+}
