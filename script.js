@@ -23,7 +23,7 @@ let cityBackgrounds = {};
 
 async function loadCityBackgrounds() {
     try {
-        const response = await fetch('./data/cities.json');
+        const response = await fetch('data/cities.json');
         if (!response.ok) throw new Error('Failed to load city backgrounds JSON');
 
         cityBackgrounds = await response.json();
