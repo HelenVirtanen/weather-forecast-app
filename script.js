@@ -19,21 +19,17 @@ const temperature = document.getElementById('temperature');
 
 const appWeatherIcon = document.querySelector('.app__weather__icon');
 
-const cityBackgrounds = {
-    'London': 'images/cities/london.webp',
-    'Sydney': 'images/cities/sydney.webp',
-    'Melbourne': 'images/cities/melbourne.webp',
-    'Paris': 'images/cities/paris.webp',
-    'Pekin': 'images/cities/pekin.webp',
-    'New York': 'images/cities/new_york.webp',
-    'Tokyo': 'images/cities/tokyo.webp',
-    'Moscow': 'images/cities/moscow.webp',
-    'Reykjavik': 'images/cities/reykjavik.webp',
-    'Singapore': 'images/cities/singapore.webp',
-    'Bangkok': 'images/cities/bangkok.webp',
-    'Dubai': 'images/cities/dubai.webp',
-    'Helsinki': 'images/cities/helsinki.webp',
-    'Saint Petersburg': 'images/cities/saint_petersburg.webp'
+let cityBackgrounds = {};
+
+async function loadCityBackgrounds() {
+    try {
+        const response = await fetch('./data/cities.json');
+        if (!response.ok) throw new Error('Failed to load city backgrounds JSON');
+
+        cityBackgrounds = await response.json();
+    } catch (error) {
+        console.error('Error while loading cityBackgrounds:', error);
+    }
 }
 
 const weatherAdvices = {
@@ -105,7 +101,8 @@ function roundValue(value) {
 }
 
 /* Default front after loading */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadCityBackgrounds();
     setCurrentDate();
     setCurrentDay();
     getWeatherByCity(defaultCity);
@@ -137,7 +134,7 @@ function setCityBackground(cityName) {
     if (backgroundImage) {
         appWeather.style.backgroundImage = `url(${backgroundImage})`;
     } else {
-        appWeather.style.backgroundImage = `url('images/cities/weather_background.jpeg')`;
+        appWeather.style.backgroundImage = `url('images/cities/weather_background.webp')`;
     }
 }
 
