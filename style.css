@@ -266,7 +266,7 @@ body {
 .app__openmap__button {
     width: 100%;
     margin-top: 20px;
-    padding: 10px 30px;
+    padding: 8px 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -413,9 +413,8 @@ body {
 }
 
 .app__openmap__button-icon {
-    width: 18px;
-    height: 22px;
-  }
+    width: 30px;
+}
 
 #map {
     width: 50%;
